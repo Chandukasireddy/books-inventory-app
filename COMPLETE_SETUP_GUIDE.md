@@ -97,6 +97,218 @@
 
 ---
 
+## 🎓 Interview: FastAPI Backend Pseudocode
+
+**Question:** "Walk me through how your FastAPI backend works"
+
+### Connection Lifecycle (Resource Management)
+```python
+# Handles database connection safely - prevents leaks & ensures cleanup
+function get_db():
+    OPEN connection to PostgreSQL transaction pooler
+    TRY:
+        YIELD connection to caller  ← caller uses it
+        COMMIT changes (auto-save)
+    CATCH any error:
+        ROLLBACK changes (undo all)
+    FINALLY:
+        CLOSE connection (cleanup)
+    
+    # Why? Every operation is atomic (all-or-nothing), prevents abandoned connections
+```
+
+### Initialization on Startup
+```python
+# Auto-runs when app starts (happens ONCE per deployment)
+function init_db():
+    OPEN database connection
+    
+    # Create table only if it doesn't exist
+    EXECUTE SQL: CREATE TABLE IF NOT EXISTS books (
+        id UUID PRIMARY KEY,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
+        genre TEXT,
+        year INTEGER,
+        rating FLOAT,
+        read BOOLEAN DEFAULT FALSE
+    )
+    
+    IF no books exist in table THEN:
+        PREPARE seed data = [
+            (Dune, Frank Herbert, Sci-Fi, 1965, 4.8, True),
+            (The Hobbit, J.R.R. Tolkien, Fantasy, 1937, 4.7, True),
+            ... 6 more books ...
+        ]
+        
+        FOR each book in seed data:
+            GENERATE new UUID
+            INSERT row into books table
+        
+        COMMIT all inserts at once
+    
+    CLOSE connection
+```
+
+### GET Endpoint Flow (Fetching Books)
+```python
+# When browser sends: GET /books?genre=Sci-Fi&author=Frank
+
+function GET_books(genre=None, author=None, read_status=None):
+    OPEN database connection via get_db()
+    
+    START building query: SELECT * FROM books
+    
+    IF genre provided:
+        ADD condition: WHERE genre = 'Sci-Fi'
+    IF author provided:
+        ADD condition: AND author LIKE '%Frank%'  ← LIKE = partial match
+    IF read_status provided:
+        ADD condition: AND read = True/False
+    
+    EXECUTE final query
+    FETCH all rows as dictionaries
+    
+    FOR each row dictionary:
+        VALIDATE using Pydantic Book model ← ensures correct types
+        CONVERT to Book object
+    
+    RETURN list of Book objects as JSON
+    # Browser receives: [ { id: "...", title: "Dune", ... }, ... ]
+```
+
+### POST Endpoint Flow (Creating Book)
+```python
+# When browser sends: POST /books { title: "Dune", author: "Frank", ... }
+
+function POST_books(book_data: BookCreate):
+    VALIDATE book_data using Pydantic
+        ↓ catches: missing fields, wrong types, invalid data
+        ↓ returns 400 Bad Request if fails
+    
+    OPEN database connection
+    
+    GENERATE new_id = UUID4()  ← unique identifier
+    
+    INSERT INTO books VALUES (new_id, title, author, genre, year, rating, False)
+    
+    FETCH the newly inserted row back
+    CONVERT to Book object
+    CLOSE connection
+    
+    RETURN 201 Created + Book object
+    # Browser receives: { id: "newly-generated-uuid", title: "Dune", ... }
+```
+
+### PUT Endpoint Flow (Update All Fields)
+```python
+# When browser sends: PUT /books/{id} { title: "...", author: "...", ... }
+
+function PUT_books(book_id, book_data: BookUpdate):
+    VALIDATE book_data using Pydantic ← ensures required fields
+    
+    OPEN database connection
+    
+    EXECUTE: UPDATE books SET title=?, author=?, genre=?, ... WHERE id=?
+    
+    IF 0 rows affected:
+        RETURN 404 Not Found  ← book doesn't exist
+    
+    FETCH updated row
+    CONVERT to Book object
+    CLOSE connection
+    
+    RETURN 200 OK + updated Book object
+```
+
+### PATCH Endpoint Flow (Toggle Read Status)
+```python
+# When browser sends: PATCH /books/{id}/read
+
+function PATCH_read_status(book_id):
+    OPEN database connection
+    
+    FETCH current book WHERE id = book_id
+    IF not found:
+        RETURN 404 Not Found
+    
+    current_read_status = book.read  ← True or False
+    new_status = NOT current_read_status  ← flip it
+    
+    UPDATE books SET read = new_status WHERE id = book_id
+    
+    FETCH updated book
+    CONVERT to Book object
+    CLOSE connection
+    
+    RETURN 200 OK + updated Book
+```
+
+### DELETE Endpoint Flow
+```python
+# When browser sends: DELETE /books/{id}
+
+function DELETE_books(book_id):
+    OPEN database connection
+    
+    EXECUTE: DELETE FROM books WHERE id = book_id
+    
+    IF 0 rows deleted:
+        RETURN 404 Not Found
+    
+    CLOSE connection
+    RETURN 204 No Content  ← success, no response body needed
+```
+
+### Stats Aggregation Flow
+```python
+# When browser sends: GET /stats
+
+function GET_stats():
+    OPEN database connection
+    
+    # All of these run efficiently because PostgreSQL optimizes aggregates
+    total_books = COUNT(*) FROM books  ← 8
+    books_read = COUNT(*) WHERE read = True  ← 5
+    avg_rating = AVG(rating)  ← 4.6
+    
+    genre_breakdown = GROUP BY genre, COUNT(*)
+        → { "Sci-Fi": 2, "Fantasy": 3, ... }
+    
+    CLOSE connection
+    
+    RETURN Stats object:
+        {
+            total_books: 8,
+            books_read: 5,
+            avg_rating: 4.6,
+            books_by_genre: { "Sci-Fi": 2, ... }
+        }
+```
+
+### Key Design Patterns Applied
+
+| Pattern | Purpose | Example |
+|---------|---------|---------|
+| **Context Manager** | Resource safety (open/close/commit/rollback) | `@contextmanager def get_db()` |
+| **Pydantic Validation** | Input/output type checking | `class BookCreate(BaseModel): title: str` |
+| **Environment Config** | Secrets outside code | `DATABASE_URL` from `.env` |
+| **HTTP Status Codes** | Clear request outcomes | 201 Created, 404 Not Found, 400 Bad Request |
+| **CORS Middleware** | Allow cross-origin requests | Enable Vercel domain in Render |
+| **UUID Primary Key** | Distributed ID generation | No database coordination needed |
+| **Transaction Pooler** | Efficient serverless connections | Avoids connection exhaustion |
+
+**Why These Patterns?**
+- **Context Manager** → Never leaves connections hanging (memory leaks prevented)
+- **Pydantic** → Catches bad data at API boundary (prevents invalid DB writes)
+- **Environment Variables** → Never hardcode secrets (security)
+- **Status Codes** → Frontend knows what succeeded/failed (better UX)
+- **CORS** → Allows secure cross-site requests (frontend on Vercel, backend on Render)
+- **UUIDs** → Works in distributed systems (Render may spin down, need to work on restart)
+- **Pooler** → Handles micro-sleep on Render free tier (pooler maintains "warm" connections)
+
+---
+
 ## 🛠️ Technology Stack
 
 | Layer | Technology | Version | Purpose |
