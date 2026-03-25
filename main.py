@@ -128,14 +128,14 @@ def init_db():
         count = conn.execute("SELECT COUNT(*) AS total FROM books").fetchone()["total"]
         if count == 0:
             seed = [
-                ("Dune",                       "Frank Herbert",      "Sci-Fi",      1965, 4.8, 1),
-                ("The Hobbit",                 "J.R.R. Tolkien",     "Fantasy",     1937, 4.7, 1),
-                ("Clean Code",                 "Robert C. Martin",   "Programming", 2008, 4.3, 0),
-                ("1984",                       "George Orwell",      "Dystopian",   1949, 4.6, 1),
-                ("The Pragmatic Programmer",   "Andy Hunt",          "Programming", 1999, 4.5, 0),
-                ("Sapiens",                    "Yuval Noah Harari",  "History",     2011, 4.4, 1),
-                ("Atomic Habits",              "James Clear",        "Self-Help",   2018, 4.7, 0),
-                ("Project Hail Mary",          "Andy Weir",          "Sci-Fi",      2021, 4.9, 1),
+                ("Dune",                       "Frank Herbert",      "Sci-Fi",      1965, 4.8, True),
+                ("The Hobbit",                 "J.R.R. Tolkien",     "Fantasy",     1937, 4.7, True),
+                ("Clean Code",                 "Robert C. Martin",   "Programming", 2008, 4.3, False),
+                ("1984",                       "George Orwell",      "Dystopian",   1949, 4.6, True),
+                ("The Pragmatic Programmer",   "Andy Hunt",          "Programming", 1999, 4.5, False),
+                ("Sapiens",                    "Yuval Noah Harari",  "History",     2011, 4.4, True),
+                ("Atomic Habits",              "James Clear",        "Self-Help",   2018, 4.7, False),
+                ("Project Hail Mary",          "Andy Weir",          "Sci-Fi",      2021, 4.9, True),
             ]
             with conn.cursor() as cur:
                 cur.executemany(
