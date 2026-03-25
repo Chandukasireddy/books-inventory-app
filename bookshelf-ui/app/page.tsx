@@ -11,8 +11,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Book, BookCreate, Stats,
-  fetchBooks, fetchStats, createBook, deleteBook, toggleRead,
+  Book, BookCreate, BookUpdate, Stats,
+  fetchBooks, fetchStats, createBook, updateBook, deleteBook, toggleRead,
 } from "@/lib/api";
 import styles from "./page.module.css";
 
@@ -38,6 +38,11 @@ export default function HomePage() {
   const [showForm, setShowForm] = useState(false);
   const [form,     setForm]     = useState<BookCreate>(EMPTY_FORM);
   const [saving,   setSaving]   = useState(false);
+
+  // ── Edit-book form state ──────────────────────────────────────────────────
+  const [editBook, setEditBook] = useState<Book | null>(null);
+  const [editForm, setEditForm] = useState<BookUpdate>(EMPTY_FORM);
+  const [editSaving, setEditSaving] = useState(false);
 
   // ── Debounce author search (350 ms) ──────────────────────────────────────
   useEffect(() => {
@@ -95,6 +100,33 @@ export default function HomePage() {
       loadData();
     } catch {
       alert("Failed to update read status");
+    }
+  };
+
+  const handleEdit = (book: Book) => {
+    setEditBook(book);
+    setEditForm({
+      title: book.title,
+      author: book.author,
+      genre: book.genre,
+      year: book.year,
+      rating: book.rating,
+      read: book.read,
+    });
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editBook) return;
+    setEditSaving(true);
+    try {
+      await updateBook(editBook.id, editForm); // PUT /books/{id}
+      setEditBook(null);
+      loadData();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Failed to update book");
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -162,6 +194,46 @@ export default function HomePage() {
           {showForm ? "✕ Cancel" : "+ Add Book"}
         </button>
       </div>
+
+      {/* ── Edit book form (modal) ──────────────────────────────────────────── */}
+      {editBook && (
+        <form className={styles.addForm} onSubmit={handleSaveEdit}>
+          <h3>Edit Book</h3>
+          <div className={styles.formGrid}>
+            <input className={styles.input} required placeholder="Title"
+              value={editForm.title}
+              onChange={e => setEditForm({ ...editForm, title: e.target.value })} />
+            <input className={styles.input} required placeholder="Author"
+              value={editForm.author}
+              onChange={e => setEditForm({ ...editForm, author: e.target.value })} />
+            <input className={styles.input} required placeholder="Genre (e.g. Sci-Fi)"
+              value={editForm.genre}
+              onChange={e => setEditForm({ ...editForm, genre: e.target.value })} />
+            <input className={styles.input} required type="number"
+              placeholder="Year" min={1000} max={2100}
+              value={editForm.year}
+              onChange={e => setEditForm({ ...editForm, year: Number(e.target.value) })} />
+            <input className={styles.input} type="number"
+              placeholder="Rating (0–5)" min={0} max={5} step={0.1}
+              value={editForm.rating}
+              onChange={e => setEditForm({ ...editForm, rating: Number(e.target.value) })} />
+            <label className={styles.checkLabel}>
+              <input type="checkbox" checked={editForm.read}
+                onChange={e => setEditForm({ ...editForm, read: e.target.checked })} />
+              Already read
+            </label>
+          </div>
+          <div className={styles.formActions}>
+            <button type="submit" className={styles.btnPrimary} disabled={editSaving}>
+              {editSaving ? "Saving…" : "Save Changes"}
+            </button>
+            <button type="button" className={styles.btnSecondary}
+              onClick={() => setEditBook(null)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* ── Add book form ─────────────────────────────────────────────────── */}
       {showForm && (
@@ -255,6 +327,13 @@ export default function HomePage() {
                     </button>
                   </td>
                   <td>
+                    <button
+                      className={styles.btnSecondary}
+                      onClick={() => handleEdit(book)}
+                      style={{ marginRight: "8px" }}
+                    >
+                      Edit
+                    </button>
                     <button
                       className={styles.btnDanger}
                       onClick={() => handleDelete(book)}

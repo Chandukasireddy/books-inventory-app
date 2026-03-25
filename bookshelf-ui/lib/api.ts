@@ -34,6 +34,8 @@ export interface BookCreate {
   read: boolean;
 }
 
+export type BookUpdate = BookCreate;
+
 export interface Stats {
   total_books: number;
   books_read: number;
@@ -99,6 +101,19 @@ export async function toggleRead(id: string, read: boolean): Promise<Book> {
     method: "PATCH",
   });
   if (!res.ok) throw new Error(`PATCH /books/${id}/read failed: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * PUT /books/{id}  — update all fields of a book.
+ */
+export async function updateBook(id: string, data: BookUpdate): Promise<Book> {
+  const res = await fetch(`${API_URL}/books/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`PUT /books/${id} failed: ${res.status}`);
   return res.json();
 }
 
