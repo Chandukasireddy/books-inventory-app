@@ -200,27 +200,42 @@ export default function HomePage() {
         <form className={styles.addForm} onSubmit={handleSaveEdit}>
           <h3>Edit Book</h3>
           <div className={styles.formGrid}>
-            <input className={styles.input} required placeholder="Title"
-              value={editForm.title}
-              onChange={e => setEditForm({ ...editForm, title: e.target.value })} />
-            <input className={styles.input} required placeholder="Author"
-              value={editForm.author}
-              onChange={e => setEditForm({ ...editForm, author: e.target.value })} />
-            <input className={styles.input} required placeholder="Genre (e.g. Sci-Fi)"
-              value={editForm.genre}
-              onChange={e => setEditForm({ ...editForm, genre: e.target.value })} />
-            <input className={styles.input} required type="number"
-              placeholder="Year" min={1000} max={2100}
-              value={editForm.year}
-              onChange={e => setEditForm({ ...editForm, year: Number(e.target.value) })} />
-            <input className={styles.input} type="number"
-              placeholder="Rating (0–5)" min={0} max={5} step={0.1}
-              value={editForm.rating}
-              onChange={e => setEditForm({ ...editForm, rating: Number(e.target.value) })} />
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Title</label>
+              <input className={styles.input} required placeholder="Enter book title"
+                value={editForm.title}
+                onChange={e => setEditForm({ ...editForm, title: e.target.value })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Author</label>
+              <input className={styles.input} required placeholder="Author name"
+                value={editForm.author}
+                onChange={e => setEditForm({ ...editForm, author: e.target.value })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Genre</label>
+              <input className={styles.input} required placeholder="e.g. Sci-Fi, Fantasy"
+                value={editForm.genre}
+                onChange={e => setEditForm({ ...editForm, genre: e.target.value })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Year</label>
+              <input className={styles.input} required type="number"
+                placeholder="Publication year" min={1000} max={2100}
+                value={editForm.year}
+                onChange={e => setEditForm({ ...editForm, year: Number(e.target.value) })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Rating</label>
+              <input className={styles.input} type="number"
+                placeholder="0 to 5 stars" min={0} max={5} step={0.1}
+                value={editForm.rating}
+                onChange={e => setEditForm({ ...editForm, rating: Number(e.target.value) })} />
+            </div>
             <label className={styles.checkLabel}>
               <input type="checkbox" checked={editForm.read}
                 onChange={e => setEditForm({ ...editForm, read: e.target.checked })} />
-              Already read
+              <span>Already read this book</span>
             </label>
           </div>
           <div className={styles.formActions}>
@@ -240,27 +255,42 @@ export default function HomePage() {
         <form className={styles.addForm} onSubmit={handleAdd}>
           <h3>New Book</h3>
           <div className={styles.formGrid}>
-            <input className={styles.input} required placeholder="Title"
-              value={form.title}
-              onChange={e => setForm({ ...form, title: e.target.value })} />
-            <input className={styles.input} required placeholder="Author"
-              value={form.author}
-              onChange={e => setForm({ ...form, author: e.target.value })} />
-            <input className={styles.input} required placeholder="Genre (e.g. Sci-Fi)"
-              value={form.genre}
-              onChange={e => setForm({ ...form, genre: e.target.value })} />
-            <input className={styles.input} required type="number"
-              placeholder="Year" min={1000} max={2100}
-              value={form.year}
-              onChange={e => setForm({ ...form, year: Number(e.target.value) })} />
-            <input className={styles.input} type="number"
-              placeholder="Rating (0–5)" min={0} max={5} step={0.1}
-              value={form.rating}
-              onChange={e => setForm({ ...form, rating: Number(e.target.value) })} />
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Title <span style={{color: "#ef4444"}}>*</span></label>
+              <input className={styles.input} required placeholder="Enter book title"
+                value={form.title}
+                onChange={e => setForm({ ...form, title: e.target.value })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Author <span style={{color: "#ef4444"}}>*</span></label>
+              <input className={styles.input} required placeholder="Author name"
+                value={form.author}
+                onChange={e => setForm({ ...form, author: e.target.value })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Genre <span style={{color: "#ef4444"}}>*</span></label>
+              <input className={styles.input} required placeholder="e.g. Sci-Fi, Fantasy"
+                value={form.genre}
+                onChange={e => setForm({ ...form, genre: e.target.value })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Year <span style={{color: "#ef4444"}}>*</span></label>
+              <input className={styles.input} required type="number"
+                placeholder="Publication year" min={1000} max={2100}
+                value={form.year}
+                onChange={e => setForm({ ...form, year: Number(e.target.value) })} />
+            </div>
+            <div className={styles.formField}>
+              <label className={styles.fieldLabel}>Rating</label>
+              <input className={styles.input} type="number"
+                placeholder="0 to 5 stars" min={0} max={5} step={0.1}
+                value={form.rating}
+                onChange={e => setForm({ ...form, rating: Number(e.target.value) })} />
+            </div>
             <label className={styles.checkLabel}>
               <input type="checkbox" checked={form.read}
                 onChange={e => setForm({ ...form, read: e.target.checked })} />
-              Already read
+              <span>Already read this book</span>
             </label>
           </div>
           <div className={styles.formActions}>
@@ -283,80 +313,79 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ── Books table ───────────────────────────────────────────────────── */}
+      {/* ── Books grid (card layout) ──────────────────────────────────────── */}
       {loading ? (
-        <div className={styles.loading}>Loading…</div>
+        <div className={styles.loading}>⏳ Loading your books...</div>
+      ) : books.length === 0 ? (
+        <div className={styles.emptyState}>
+          <h2>📚 No books found</h2>
+          <p>Try adjusting your filters or add a new book to get started!</p>
+        </div>
       ) : (
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Genre</th>
-                <th>Year</th>
-                <th>Rating</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className={styles.empty}>No books found.</td>
-                </tr>
-              ) : books.map(book => (
-                <tr key={book.id} className={book.read ? styles.rowRead : ""}>
-                  <td className={styles.titleCell}>{book.title}</td>
-                  <td>{book.author}</td>
-                  <td>
-                    <span className={styles.genreBadge}>{book.genre}</span>
-                  </td>
-                  <td>{book.year}</td>
-                  <td className={styles.ratingCell}>
+        <>
+          <div className={styles.booksContainer}>
+            {books.map(book => (
+              <div key={book.id} className={`${styles.bookCard} ${book.read ? styles.read : ""}`}>
+                <div>
+                  <h2 className={styles.bookTitle}>{book.title}</h2>
+                  <p className={styles.bookAuthor}>by {book.author}</p>
+                  
+                  <div className={styles.bookMeta}>
+                    <span className={styles.bookGenre}>{book.genre}</span>
+                    <span className={styles.bookYear}>{book.year}</span>
+                  </div>
+
+                  <div className={styles.bookRating}>
                     {"★".repeat(Math.round(book.rating))}
                     {"☆".repeat(5 - Math.round(book.rating))}
-                    {" "}{book.rating}
-                  </td>
-                  <td>
-                    <button
-                      className={book.read ? styles.btnRead : styles.btnUnread}
-                      onClick={() => handleToggleRead(book)}
-                    >
-                      {book.read ? "✓ Read" : "○ Unread"}
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className={styles.btnSecondary}
-                      onClick={() => handleEdit(book)}
-                      style={{ marginRight: "8px" }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className={styles.btnDanger}
-                      onClick={() => handleDelete(book)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className={styles.tableFooter}>
-            {books.length} book{books.length !== 1 ? "s" : ""}
+                    <span style={{ fontSize: "0.9rem", marginLeft: "8px", color: "#6b7280" }}>
+                      {book.rating.toFixed(1)}
+                    </span>
+                  </div>
+
+                  {book.read && (
+                    <p style={{ margin: "8px 0 0", fontSize: "0.9rem", color: "#10b981", fontWeight: 600 }}>
+                      ✓ Already read
+                    </p>
+                  )}
+                </div>
+
+                <div className={styles.bookActions}>
+                  <button
+                    className={book.read ? styles.btnRead : styles.btnUnread}
+                    onClick={() => handleToggleRead(book)}
+                  >
+                    {book.read ? "✓ Read" : "○ Unread"}
+                  </button>
+                  <button
+                    className={styles.btnSecondary}
+                    onClick={() => handleEdit(book)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className={styles.btnDanger}
+                    onClick={() => handleDelete(book)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className={styles.booksFooter}>
+            {books.length} book{books.length !== 1 ? "s" : ""} in your library
             {" · "}
-            <a href="http://localhost:8000/docs" target="_blank" rel="noopener">
-              API Docs ↗
+            <a href="https://books-inventory-app.onrender.com/docs" target="_blank" rel="noopener">
+              🔗 API Docs
             </a>
             {" · "}
-            <a href="http://localhost:8000/stats" target="_blank" rel="noopener">
-              /stats JSON ↗
+            <a href="https://books-inventory-app.onrender.com/stats" target="_blank" rel="noopener">
+              📊 Stats JSON
             </a>
           </p>
-        </div>
+        </>
       )}
     </main>
   );

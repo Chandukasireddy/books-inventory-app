@@ -1,3 +1,16 @@
+/* ── CSS Variables ──────────────────────────────────────────────────────────── */
+:root {
+  --primary: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --secondary: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gray-light: #f3f4f6;
+  --gray-medium: #9ca3af;
+  --gray-dark: #1f2937;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
