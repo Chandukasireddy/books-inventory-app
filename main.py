@@ -125,7 +125,7 @@ def init_db():
             )
         """)
 
-        count = conn.execute("SELECT COUNT(*) FROM books").fetchone()[0]
+        count = conn.execute("SELECT COUNT(*) AS total FROM books").fetchone()["total"]
         if count == 0:
             seed = [
                 ("Dune",                       "Frank Herbert",      "Sci-Fi",      1965, 4.8, 1),
