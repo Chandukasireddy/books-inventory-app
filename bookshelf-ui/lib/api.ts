@@ -7,9 +7,11 @@
  * Open browser DevTools → Network tab to watch every request.
  */
 
-// Calls go to /api/... which Next.js proxies to http://localhost:8000/...
-// This eliminates CORS entirely — the browser only ever talks to localhost:3000.
-const API_URL = "/api";
+// On Vercel: Make direct calls to Render backend (requires CORS)
+// On localhost: Use /api proxy (Next.js rewrites to localhost:8000, no CORS needed)
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ? 
+  process.env.NEXT_PUBLIC_API_BASE_URL : 
+  "/api";
 
 // ── Types (mirror the Pydantic models in main.py) ──────────────────────────
 
