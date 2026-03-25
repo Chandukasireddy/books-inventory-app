@@ -137,10 +137,11 @@ def init_db():
                 ("Atomic Habits",              "James Clear",        "Self-Help",   2018, 4.7, 0),
                 ("Project Hail Mary",          "Andy Weir",          "Sci-Fi",      2021, 4.9, 1),
             ]
-            conn.executemany(
-                "INSERT INTO books (id, title, author, genre, year, rating, read) VALUES (%s,%s,%s,%s,%s,%s,%s)",
-                [(str(uuid4()), *row) for row in seed],
-            )
+            with conn.cursor() as cur:
+                cur.executemany(
+                    "INSERT INTO books (id, title, author, genre, year, rating, read) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+                    [(str(uuid4()), *row) for row in seed],
+                )
 
 
 init_db()   # runs once when the server starts
