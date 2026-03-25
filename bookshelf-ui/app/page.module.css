@@ -1,0 +1,249 @@
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 16px 60px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.statsBar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 3px 11px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.statGreen { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; }
+
+/* ── Controls bar ────────────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.input, .select {
+  padding: 7px 11px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #1e293b;
+  outline: none;
+}
+
+.input:focus, .select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+}
+
+.input { min-width: 180px; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btnPrimary {
+  padding: 7px 15px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.btnPrimary:hover:not(:disabled) { background: #4f46e5; }
+.btnPrimary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btnSecondary {
+  padding: 7px 15px;
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.btnSecondary:hover { background: #f9fafb; }
+
+.btnDanger {
+  padding: 3px 9px;
+  background: #fff;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.btnDanger:hover { background: #fef2f2; }
+
+.btnRead {
+  padding: 3px 9px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.btnRead:hover { background: #d1fae5; }
+
+.btnUnread {
+  padding: 3px 9px;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.btnUnread:hover { background: #f1f5f9; }
+
+/* ── Add form ────────────────────────────────────────────────────────────── */
+.addForm {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+.addForm h3 {
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+  padding: 7px 0;
+}
+
+.formActions { display: flex; gap: 8px; }
+
+/* ── Feedback states ─────────────────────────────────────────────────────── */
+.error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 0.88rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 56px;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.tableWrapper {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.table thead { background: #f8fafc; }
+
+.table th {
+  padding: 9px 13px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 9px 13px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover { background: #f8fafc; }
+.rowRead td { color: #64748b; }
+
+.titleCell { font-weight: 500; color: #1e293b !important; }
+
+.genreBadge {
+  display: inline-block;
+  background: #ede9fe;
+  color: #5b21b6;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.ratingCell {
+  color: #d97706;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px;
+  color: #94a3b8;
+}
+
+.tableFooter {
+  padding: 8px 13px;
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  border-top: 1px solid #f1f5f9;
+}
+
+.tableFooter a {
+  color: #6366f1;
+  text-decoration: none;
+}
+.tableFooter a:hover { text-decoration: underline; }

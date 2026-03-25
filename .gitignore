@@ -1,0 +1,12 @@
+/.claude
+/.pytest_cache
+/venv
+/__pycache__
+/.env
+/.env.*
+/books.db
+
+# Frontend (Next.js)
+/bookshelf-ui/node_modules/
+/bookshelf-ui/.next/
+/bookshelf-ui/out/
